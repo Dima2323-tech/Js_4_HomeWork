@@ -21,49 +21,51 @@ let bank = [
     },
 ]
 
-function buyUE(){
-    console.log("Cчёт:" , " Доллары -" ,parseInt(`${userWallet.amountUsa}`) , " Евро -" , parseInt(`${userWallet.amountEuro}`) , " Гривны -" , parseInt(`${userWallet.amountUa}`))
+function buyUE(wallet , fn){
+    console.log("Cчёт:" , " Доллары -" ,parseInt(`${wallet.amountUsa}`) , " Евро -" , parseInt(`${wallet.amountEuro}`) , " Гривны -" , parseInt(`${wallet.amountUa}`))
     if (userWallet.amountUa <= 0){
         return  console.log("Обмен не возможен")
     }
-    bank.forEach(arg =>{
+    fn.forEach(arg =>{
         if (arg.name == "usa"){
-            console.log("User может купить" , Math.ceil(`${userWallet.amountUa / arg.buy}`) , "Долларов")
+            console.log("User может купить" , Math.ceil(`${wallet.amountUa / arg.buy}`) , "Долларов")
         }
         else if(arg.name == "euro"){
-            console.log("User может купить" , Math.ceil(`${userWallet.amountUa / arg.buy}`) , "Евро")
+            console.log("User может купить" , Math.ceil(`${wallet.amountUa / arg.buy}`) , "Евро")
         }
     })
 }
 
-function sellUE() {
-    bank.forEach(arg =>{
+function sellUE(walUsa , walEuro, fn) {
+    let all = 0;
+    for (const arg of fn){
         if (arg.name == "usa"){
-            console.log("Если User продаст Доллары он получит" , Math.ceil(`${userWallet.amountUsa * arg.sell}`) , "Гривен")
+           all += walUsa * arg.buy
         }
-        else if (arg.name == "euro"){
-            console.log("Если User продаст Eвро он получит" , Math.ceil(`${userWallet.amountEuro * arg.sell}`) , "Гривен")
+        else {
+            all += walEuro * arg.buy
         }
-    })
+    }
+    console.log("Если пользователь продаст все свои збережения он получит - " , `${all}`)
 }
 console.log("--------------Первый под пункт--------------")
-buyUE()
+buyUE(userWallet , bank)
 console.log("--------------Второй под пункт--------------")
-sellUE()
+sellUE(userWallet.amountUsa , userWallet.amountEuro , bank)
 // 2)Створити функцію move(яка повертає на скільки кроків змістився користувач ).
 // Створити функцію moveUser яка отримує напрямок переміщення і функцію move як колбек.
 // // moveUser ('north', move, 10) повина повернути ( Юзер перемістився на північ на 10 кроків)
 console.log("---------------------Второе задание----------------------")
 let move = (move) => `${move}`;
 
-function moveUser (direction , move , fn){
+function moveUser (direction , fn , move){
     console.log("Юзер перемістився на" , `${direction}` , "на" , `${fn(move)}`)
 }
 
-moveUser("north" , "10" , move)
+moveUser("north" , move , "10")
 // 3) Створіть массив в якому видаляється кожний другий елемент ["Keep", "Remove", "Keep", "Remove", "Keep", ...] в результаті повинен бути ось такий новий массив
 // ["Keep", "Keep", "Keep", ...], Врахувати що массив може бути пустий, повернути помилку в разі пустого масиву
-//
+
 console.log("---------------------Третье задание----------------------")
 const Arr = ["Keep", "Remove", "Keep", "Remove", "Keep" ,"Remove" , "Keep"];
 
@@ -102,13 +104,9 @@ function Square() {
             arg.SquareC = Math.ceil(Math.PI * Math.ceil(Math.pow(arg.radius, 2)))
             console.log("Фигура - " , `${arg.figure}` , "    " , "Радиус - " ,`${arg.radius}` , "    " , "Площадь - " , `${arg.SquareC}`)
         }
-        else if (arg.figure == 'Squar'){
-            arg.SquareS = arg.sizeA * arg.sizeB
-            console.log("Фигура -" ,`${arg.figure}`, "    " , `Cторона А - ${arg.sizeA}  Cторона Б - ${arg.sizeB}` , "    " , "Площадь - " , `${arg.SquareS}`)
-        }
-        else {
-            arg.SquareR = 1/2 * (arg.sizeA * arg.sizeB)
-            console.log("Фигура -" ,`${arg.figure}`, "    " , `Cторона А - ${arg.sizeA}  Высота - ${arg.sizeB}` , "    " , "Площадь - " , `${arg.SquareR}`)
+        else if (arg.figure == 'Squar' || arg.figure == "Rectangle"){
+            arg.SquareSR = arg.sizeA * arg.sizeB
+            console.log("Фигура -" ,`${arg.figure}`, "    " , `Cторона А - ${arg.sizeA}  Cторона Б - ${arg.sizeB}` , "    " , "Площадь - " , `${arg.SquareSR}`)
         }
 
     })
@@ -124,14 +122,11 @@ const  doubleValuue = function (item){
 
 const oldArr = [2,3,5,4,8,7,9,10];
 
-function doubleArr(arr , arr2){
+function doubleArr(arr , fn){
     let newArr = [];
     for (i = 0 ; i < oldArr.length; i++){
-        if (oldArr[i] % 2){
-            delete arr[i]
-        }
-        else {
-            newArr.push(arr2(arr[i]));
+        if ((oldArr[i] % 2) == 0){
+            newArr.push(fn(arr[i]));
         }
     }
     return newArr;
@@ -142,17 +137,15 @@ console.log(doubleArr(oldArr , doubleValuue))
 console.log("---------------------Шестое задание----------------------")
 arrRound = [2.5,3.2,5.4,4.6,8.3,7.1,9.5,10.02]
 
-function round(){
-    let newRound = []
-    for (i = 0; i < arrRound.length; i++){
-        let RoundNumbers = Math.ceil(arrRound[i])
-        newRound.push(RoundNumbers)
+function round(Round){
+
+    for (i = 0; i < Round.length; i++){
+        Round[i] = Math.ceil(Round[i])
     }
-    console.log(newRound)
 }
 
-round()
-
+round(arrRound)
+console.log(arrRound)
 // // 7)Створити функцію яка повертає массив довжиною 10 в якому всі значення random від 0 до 100
 console.log("---------------------Седьмое задание----------------------")
 function random(){
